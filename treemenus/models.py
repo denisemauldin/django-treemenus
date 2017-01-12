@@ -2,7 +2,7 @@ from itertools import chain
 
 from django.db import models
 from django.utils.translation import ugettext, ugettext_lazy as _
-
+from django.core.urlresolvers import reverse
 
 class MenuItem(models.Model):
     parent = models.ForeignKey('self', verbose_name=_('parent'), null=True, blank=True)
@@ -19,6 +19,14 @@ class MenuItem(models.Model):
 
     def __unicode__(self):
         return self.caption
+
+    def get_url(self):
+        if self.url:
+            return self.url
+        elif self.named_url:
+            return reverse(self.named_url)
+        else:
+            return '#'
 
     def save(self, force_insert=False, **kwargs):
         from treemenus.utils import clean_ranks
